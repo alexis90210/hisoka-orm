@@ -2,6 +2,7 @@
     "name": "hisoka/orm",
     "description": "orm php mysql",
     "license": "MIT",
+    "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
             "Hisoka\\Orm\\": "src/"
@@ -16,5 +17,7 @@
             "email": "alexisng90210@gmail.com"
         }
     ],
-    "require": {}
+    "require": {
+        "php": ">=7.4"
+    }
 }
