@@ -2,6 +2,7 @@
     "name": "hisoka/orm",
     "description": "orm php mysql",
     "license": "MIT",
+    "type": "library",
     "autoload": {
         "psr-4": {
             "Hisoka\\Orm\\": "src/"

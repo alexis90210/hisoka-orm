@@ -2,10 +2,15 @@
 
 require 'vendor/autoload.php';
 
-// utilisateurs 
+// require ORM
 
-$DB =  new \Hisoka\Orm\DB();
+use Hisoka\Orm\DB;
 
+// instance
+
+$DB =  new DB();
+
+// utilisateurs
 
 $Utilisateurs = $DB
     ->table('Utilisateurs')
