@@ -1,0 +1,20 @@
+{
+    "name": "hisoka/orm",
+    "description": "orm php mysql",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Hisoka\\Orm\\": "src/"
+        },
+        "files": [
+            "src/orm.php"
+        ]
+    },
+    "authors": [
+        {
+            "name": "alexis90210",
+            "email": "alexisng90210@gmail.com"
+        }
+    ],
+    "require": {}
+}

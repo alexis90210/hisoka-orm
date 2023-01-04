@@ -1,8 +1,11 @@
 <?php
 
-require 'orm.php';
+require 'vendor/autoload.php';
 
 // utilisateurs 
+
+$DB =  new \Hisoka\Orm\DB();
+
 
 $Utilisateurs = $DB
     ->table('Utilisateurs')
@@ -17,4 +20,4 @@ $stats = [
     "Utilisateurs" => $Utilisateurs
 ];
 
-ds( $stats );
+var_dump( $stats );

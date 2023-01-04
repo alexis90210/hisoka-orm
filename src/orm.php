@@ -5,6 +5,10 @@
  * Find on github
  */
 
+ namespace Hisoka\Orm;
+ use \PDO;
+ use \PDOException;
+
 class DB
 {
     public PDO $db;
@@ -12,7 +16,7 @@ class DB
     static $dbname   = "your_db_name";
     static $username = "your_username";
     static $password = "your_password";
-    static $port           = "your_port";
+    static $port           = 35348;
     protected $table;
     protected $query;
     protected $prepare;
@@ -308,7 +312,4 @@ class DB
         return $this->error;
     }
 }
-
-
-$DB =  new DB();
 
