@@ -19,12 +19,14 @@ class DB
     static $username = "your_username";
     static $password = "your_password";
     static $port           = "your_port";
-    protected $table;
-    protected $query;
-    protected $prepare;
+    protected $table = "";
+    protected $query = "";
+    protected $prepare ;
     protected $limit = 0;
-    protected $status;
-    protected $error;
+    protected $status = false;
+    protected $error = array();
+    protected $whereStatement = "";
+    protected $joinStatement = "";
 
     /**
      * INSTANCE CONSTRUCTOR
@@ -157,7 +159,7 @@ class DB
     /**
      *  WHERE STATEMEMENT
      */
-    public function where(array | int $data, string $operator = "="): self
+    public function where(array | int $data , string $operator = "=" ): self
     {
         $query = "";
 
@@ -168,18 +170,19 @@ class DB
 
             $query = " WHERE ";
 
-            if (count($data) > 0 && isset($data[0]) && is_array($data[0])) {
+            if ( count($data) > 0 && isset($data[0]) && is_array($data[0])) {
 
                 foreach ($data as $key => $item) :
 
-                    if (!empty($item['key']) && !empty($item['value']) && !empty($item['operator'])) $query .= " " . $item['key'] . $item['operator'] . "'" . $item['value'] . "' AND";
-
+                    if (!empty($item['key']) && !empty($item['value']) && !empty($item['operator'])) $query .= " ". $item['key'] . $item['operator'] ."'". $item['value'] ."' AND";
+                    
                 endforeach;
-            } else if (count($data) > 0) {
+
+            } else if ( count($data) > 0 ) {
                 foreach ($data as $key => $item) :
 
                     if (!empty($item)) $query .= " $key $operator '$item' AND";
-
+    
                 endforeach;
             }
 
@@ -199,10 +202,25 @@ class DB
             die($err_type . ' : Type non pris en charge');
         }
 
-        $this->query .= $query;
+        // $this->query .= $query;
+        $this->whereStatement .= $query;
 
         return $this;
     }
+
+    /**
+     *  JOIN STATEMEMENT
+     */
+
+     public function joinWith( string $tableA , string $jointureA, string $tableB, string $jointureB,   string $type = "" ) : self
+     {       
+   
+        if ( empty( $type ) ) $this->joinStatement .= " JOIN $tableA ON $tableA.$jointureA = $tableB.$jointureB ";
+
+        else $this->joinStatement .= " $type JOIN $tableA ON $tableA.$jointureA = $tableB.$jointureB ";
+ 
+        return $this;
+     }
 
     /**
      *  OR WHERE STATEMEMENT
@@ -220,7 +238,7 @@ class DB
 
             foreach ($data as $key => $item) :
 
-                if (empty($item)) $item = (int) $item;
+                if ( empty($item) ) $item = (int) $item;
 
                 $query .= " $key = '$item' OR";
 
@@ -249,8 +267,10 @@ class DB
     public function generateSQL()
     {
 
-        return $this->query;
+        return $this->query . " " . $this->joinStatement . " " . $this->whereStatement;
     }
+
+    
 
     /**
      *  EXECUTE STATEMEMENT
@@ -265,7 +285,7 @@ class DB
 
         try {
 
-            $prepare = $this->db->prepare($this->query);
+            $prepare = $this->db->prepare( $this->generateSQL() );
 
             $this->status = $prepare->execute();
 
@@ -325,3 +345,4 @@ class DB
         return $this->error;
     }
 }
+

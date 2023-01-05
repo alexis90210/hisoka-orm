@@ -19,10 +19,28 @@ $Utilisateurs = $DB
 $Utilisateurs = count( $Utilisateurs );
 
 
-// stats global
 
-$stats = [
-    "Utilisateurs" => $Utilisateurs
-];
 
-var_dump( $stats );
+// Jointures
+
+$Interfaces_acheves = $DB
+            ->table('Interfaces')
+            ->select(["Interfaces.Progression" , "Projets.IDProjets"])
+            ->where(        
+                array(
+                    [
+                        "key" => "Projets.IDProjets",
+                        "value" => 0,
+                        "operator" => "="
+                    ],
+                    [
+                        "key" => "Interfaces.Progression",
+                        "value" => 4,
+                        "operator" => ">"
+                    ],
+                )
+            )
+            ->joinWith("Projets", "IDProjets" , "IDProjets")
+            ->joinWith("Utilisateurs", "IDUtilisateurs" , "IDUtilisateurs")
+            ->generateSQL();
+            // ->execute()->fetchAssociative();
