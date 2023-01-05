@@ -1,13 +1,15 @@
 <?php
+
 /**
  * custom ORM ( Object Relationnal Mapping )
  * Build and propulsed by @Hisoka 
- * Find on github
+ * Find on github <@alexis90210>
  */
 
- namespace Hisoka\Orm;
- use \PDO;
- use \PDOException;
+namespace Hisoka\Orm;
+
+use \PDO;
+use \PDOException;
 
 class DB
 {
@@ -16,7 +18,7 @@ class DB
     static $dbname   = "your_db_name";
     static $username = "your_username";
     static $password = "your_password";
-    static $port           = 35348;
+    static $port           = "your_port";
     protected $table;
     protected $query;
     protected $prepare;
@@ -155,7 +157,7 @@ class DB
     /**
      *  WHERE STATEMEMENT
      */
-    public function where(array | int $data): self
+    public function where(array | int $data, string $operator = "="): self
     {
         $query = "";
 
@@ -166,11 +168,20 @@ class DB
 
             $query = " WHERE ";
 
-            foreach ($data as $key => $item) :
+            if (count($data) > 0 && isset($data[0]) && is_array($data[0])) {
 
-                if (!empty($item)) $query .= " $key = '$item' AND";
+                foreach ($data as $key => $item) :
 
-            endforeach;
+                    if (!empty($item['key']) && !empty($item['value']) && !empty($item['operator'])) $query .= " " . $item['key'] . $item['operator'] . "'" . $item['value'] . "' AND";
+
+                endforeach;
+            } else if (count($data) > 0) {
+                foreach ($data as $key => $item) :
+
+                    if (!empty($item)) $query .= " $key $operator '$item' AND";
+
+                endforeach;
+            }
 
             if ($query == " WHERE ") {
                 $query .= " 1";
@@ -209,7 +220,9 @@ class DB
 
             foreach ($data as $key => $item) :
 
-                if (!empty($item)) $query .= " $key = '$item' OR";
+                if (empty($item)) $item = (int) $item;
+
+                $query .= " $key = '$item' OR";
 
             endforeach;
 
@@ -312,4 +325,3 @@ class DB
         return $this->error;
     }
 }
-
