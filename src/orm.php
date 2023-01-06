@@ -50,6 +50,8 @@ class DB
     public function table(string $table): self
     {
         $this->table = $table;
+        $this->whereStatement = "";
+        $this->joinStatement = "";
 
         return $this;
     }
