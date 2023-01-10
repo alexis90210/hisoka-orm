@@ -1,0 +1,67 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "12101478e57cd1bab5267340d3418a1b",
+    "packages": [
+        {
+            "name": "hisoka/env",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/alexis90210/.env.git",
+                "reference": "98a3adac85680db4ee185dc878b7e107b5509e2e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/alexis90210/.env/zipball/98a3adac85680db4ee185dc878b7e107b5509e2e",
+                "reference": "98a3adac85680db4ee185dc878b7e107b5509e2e",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.4"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/env.php"
+                ],
+                "psr-4": {
+                    "Hisoka\\Env\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "alexis90210",
+                    "email": "alexisng90210@gmail.com"
+                }
+            ],
+            "description": "working with .env file",
+            "support": {
+                "issues": "https://github.com/alexis90210/.env/issues",
+                "source": "https://github.com/alexis90210/.env/tree/main"
+            },
+            "time": "2023-01-08T16:04:27+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": {
+        "hisoka/env": 20
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": {
+        "php": ">=7.4"
+    },
+    "platform-dev": [],
+    "plugin-api-version": "2.3.0"
+}

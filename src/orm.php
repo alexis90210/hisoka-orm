@@ -10,37 +10,73 @@ namespace Hisoka\Orm;
 
 use \PDO;
 use \PDOException;
+use stdClass;
 
 class DB
 {
     public PDO $db;
-    static $host     = "your_host";
-    static $dbname   = "your_db_name";
-    static $username = "your_username";
-    static $password = "your_password";
-    static $port           = "your_port";
+    protected $host;
+    protected $dbname;
+    protected $username;
+    protected $password;
+    protected $port;
     protected $table = "";
     protected $query = "";
-    protected $prepare ;
+    protected $prepare;
     protected $limit = 0;
     protected $status = false;
     protected $error = array();
     protected $whereStatement = "";
     protected $joinStatement = "";
+    protected string $environnement = '.env';
 
     /**
-     * INSTANCE CONSTRUCTOR
-     */
+     * INSTANCE CONFIGURATION  
+    */
 
-    public function __construct()
-    {
+    public function getConnexionInfo() {
+        echo json_encode([
 
-        $this->db = new PDO('mysql:host=' . self::$host . ';dbname=' . self::$dbname . ';charset=utf8;port=35348', self::$username, self::$password, [
-            PDO::ATTR_PERSISTENT => false,
-            PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true
+            "host" => $this->host,
+            "dbname" => $this->dbname,
+            "username" => $this->username,
+            "password" => $this->password,
+            "port" => $this->port
+
         ]);
+    }
 
-        $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    public function setDefaultConfig( stdClass $env = new stdClass() ) : self {
+
+
+        if ( empty( $env->HOST ) || empty( $env->DBNAME ) || empty( $env->USERNAME ) || empty( $env->PASSWORD ) || empty( $env->PORT )  ) {
+            
+            $env = \Hisoka\Env\Data::getEnv("{$this->environnement}");
+
+        }
+
+        try {
+            
+            $this->host     =  $env->HOST;
+            $this->dbname   =  $env->DBNAME;
+            $this->username =  $env->USERNAME;
+            $this->password =  $env->PASSWORD;
+            $this->port     =  $env->PORT;
+
+            $this->db = new PDO('mysql:host=' . $this->host . ';dbname=' . $this->dbname . ';charset=utf8;port='.$env->PORT, $this->username, $this->password, [
+                PDO::ATTR_PERSISTENT => false,
+                PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true
+            ]);
+                
+            $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+            return $this;
+
+        } catch (\Throwable $th) {
+            echo json_encode( $th );
+           die();
+        }
+
     }
 
     /**
@@ -161,7 +197,7 @@ class DB
     /**
      *  WHERE STATEMEMENT
      */
-    public function where(array | int $data , string $operator = "=" ): self
+    public function where(array | int $data, string $operator = "="): self
     {
         $query = "";
 
@@ -172,19 +208,18 @@ class DB
 
             $query = " WHERE ";
 
-            if ( count($data) > 0 && isset($data[0]) && is_array($data[0])) {
+            if (count($data) > 0 && isset($data[0]) && is_array($data[0])) {
 
                 foreach ($data as $key => $item) :
 
-                    if (!empty($item['key']) && !empty($item['value']) && !empty($item['operator'])) $query .= " ". $item['key'] . $item['operator'] ."'". $item['value'] ."' AND";
-                    
-                endforeach;
+                    if (!empty($item['key']) && !empty($item['value']) && !empty($item['operator'])) $query .= " " . $item['key'] . $item['operator'] . "'" . $item['value'] . "' AND";
 
-            } else if ( count($data) > 0 ) {
+                endforeach;
+            } else if (count($data) > 0) {
                 foreach ($data as $key => $item) :
 
                     if (!empty($item)) $query .= " $key $operator '$item' AND";
-    
+
                 endforeach;
             }
 
@@ -214,15 +249,15 @@ class DB
      *  JOIN STATEMEMENT
      */
 
-     public function joinWith( string $tableA , string $jointureA, string $tableB, string $jointureB,   string $type = "" ) : self
-     {       
-   
-        if ( empty( $type ) ) $this->joinStatement .= " JOIN $tableA ON $tableA.$jointureA = $tableB.$jointureB ";
+    public function joinWith(string $tableA, string $jointureA, string $tableB, string $jointureB,   string $type = ""): self
+    {
+
+        if (empty($type)) $this->joinStatement .= " JOIN $tableA ON $tableA.$jointureA = $tableB.$jointureB ";
 
         else $this->joinStatement .= " $type JOIN $tableA ON $tableA.$jointureA = $tableB.$jointureB ";
- 
+
         return $this;
-     }
+    }
 
     /**
      *  OR WHERE STATEMEMENT
@@ -240,7 +275,7 @@ class DB
 
             foreach ($data as $key => $item) :
 
-                if ( empty($item) ) $item = (int) $item;
+                if (empty($item)) $item = (int) $item;
 
                 $query .= " $key = '$item' OR";
 
@@ -272,7 +307,7 @@ class DB
         return $this->query . " " . $this->joinStatement . " " . $this->whereStatement;
     }
 
-    
+
 
     /**
      *  EXECUTE STATEMEMENT
@@ -287,7 +322,7 @@ class DB
 
         try {
 
-            $prepare = $this->db->prepare( $this->generateSQL() );
+            $prepare = $this->db->prepare($this->generateSQL());
 
             $this->status = $prepare->execute();
 
@@ -347,4 +382,3 @@ class DB
         return $this->error;
     }
 }
-

@@ -2,28 +2,30 @@
 
 require 'vendor/autoload.php';
 
-// require ORM
+// Dependancies 
 
-use Hisoka\Orm\DB;
+// use Hisoka\Orm\DB; 
 
 // instance
 
-$DB =  new DB();
+$config = \Hisoka\Env\Data::getEnv('.env.prod'); // custom .env file ( ex : .env.test )
 
-// utilisateurs
+$orm = new Hisoka\Orm\DB();
 
-$Utilisateurs = $DB
-    ->table('Utilisateurs')
+$orm->setDefaultConfig( $config );
+
+$orm->getConnexionInfo();
+
+# case 1 :
+
+$test = $orm
+    ->table('test')
     ->select([])->execute()->fetchAssociative();
 
-$Utilisateurs = count( $Utilisateurs );
 
+// case 2
 
-
-
-// Jointures
-
-$Interfaces_acheves = $DB
+$Interfaces_acheves = $orm
             ->table('Interfaces')
             ->select(["Interfaces.Progression" , "Projets.IDProjets"])
             ->where(        
@@ -40,7 +42,4 @@ $Interfaces_acheves = $DB
                     ],
                 )
             )
-            ->joinWith("Projets", "IDProjets" , "IDProjets")
-            ->joinWith("Utilisateurs", "IDUtilisateurs" , "IDUtilisateurs")
             ->generateSQL();
-            // ->execute()->fetchAssociative();

@@ -7,7 +7,14 @@ use Hisoka\Orm\DB;
 
 // instance
 
-$DB =  new DB();
+$config = \Hisoka\Env\Data::getEnv('.env.prod');
+
+$orm = new Hisoka\Orm\DB();
+
+$orm->setDefaultConfig( $config );
+
+$orm->getConnexionInfo();
+
 
 ========================================
 # DELETE
